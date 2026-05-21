@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edital – Bidding System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+
+<div th:replace="~{layout :: navbar(${role}, ${nome})}"></div>
+
+<main class="container">
+    <a th:href="@{/editais}" class="btn-secondary btn-sm">← Voltar</a>
+
+    <div class="card-detail">
+        <h2 th:text="${edital.titulo}"></h2>
+        <p class="descricao" th:text="${edital.descricao}"></p>
+
+        <div class="meta">
+            <span>📅 Fechamento: <strong th:text="${edital.datafechamento}"></strong></span>
+            <span class="badge" th:classappend="${edital.status == 'ABERTO'} ? 'badge-aberto' : 'badge-fechado'"
+                  th:text="${edital.status}"></span>
+            <span th:if="${edital.urgente}" class="badge-urgente">⚠️ Urgente</span>
+        </div>
+    </div>
+
+    <div class="alert alert-success" th:if="${param.sucesso}">Lance enviado com sucesso!</div>
+    <div class="alert alert-error"   th:if="${param.erro}" th:text="'Erro: ' + ${param.erro}"></div>
+
+    <!-- Formulário de lance: só FORNECEDOR e edital ABERTO -->
+    <div th:if="${role == 'FORNECEDOR' and edital.status == 'ABERTO'}" class="card">
+        <h3>Registrar Lance</h3>
+        <form th:action="@{/editais/{id}/lance(id=${edital.id})}" th:object="${lance}" method="post">
+            <div class="form-group">
+                <label>Valor do lance (R$) <span class="req">*</span></label>
+                <input type="number" th:field="*{valor}" step="0.01" min="0.01"
+                       placeholder="Ex.: 1500.00" required/>
+            </div>
+            <button type="submit" class="btn-primary">Enviar Lance</button>
+        </form>
+    </div>
+
+    <div th:if="${edital.status == 'ENCERRADO'}" class="alert alert-error">
+        Este edital está encerrado para novos lances.
+    </div>
+</main>
+</body>
+</html>

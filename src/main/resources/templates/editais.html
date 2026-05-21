@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Editais – Bidding System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+
+<main class="container">
+    <div class="page-header">
+        <h2>Editais</h2>
+        <div class="header-actions">
+            <a th:href="@{/editais}" class="btn-secondary" th:classappend="${urgente == null or !urgente} ? ' active' : ''">Todos</a>
+            <a th:href="@{/editais(urgente=true)}" class="btn-warning" th:classappend="${urgente} ? ' active' : ''">⚠️ Urgentes (48h)</a>
+            <a th:if="${role == 'COMPRADOR'}" th:href="@{/editais/novo}" class="btn-primary">+ Novo Edital</a>
+        </div>
+    </div>
+
+    <div class="alert alert-success" th:if="${param.criado}">Edital criado com sucesso!</div>
+    <div class="alert alert-error" th:if="${param.erro == 'acesso_negado'}">Acesso negado: apenas COMPRADOR pode criar editais.</div>
+
+    <div th:if="${#lists.isEmpty(editais)}" class="empty-state">
+        <p>Nenhum edital encontrado.</p>
+    </div>
+
+    <table th:if="${!#lists.isEmpty(editais)}" class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Título</th>
+                <th>Descrição</th>
+                <th>Fechamento</th>
+                <th>Status</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>           
+            <tr th:each="edital : ${editais}">
+                <td th:text="${edital.id}"></td>
+                <td>
+                    <span th:text="${edital.titulo}"></span>
+                    <span th:if="${edital.urgente != null and edital.urgente}" class="badge-urgente">⚠️ Urgente</span>
+                </td>
+                <td th:text="${edital.descricao}"></td>
+                <td th:text="${edital.datafechamento}"></td>
+                <td>
+                    <span class="badge" th:classappend="${edital.status == 'ABERTO'} ? 'badge-aberto' : 'badge-fechado'"
+                          th:text="${edital.status}"></span>
+                </td>
+                <td>
+                    <a th:href="@{/editais/{id}(id=${edital.id})}" class="btn-secondary btn-sm">Ver</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

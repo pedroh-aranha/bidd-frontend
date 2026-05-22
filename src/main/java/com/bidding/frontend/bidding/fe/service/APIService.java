@@ -26,7 +26,7 @@ import org.springframework.web.client.RestTemplate;
 public class APIService {
     
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String BASE_URL = "http://localhost:3333";
+    private final String BASE_URL = "http://localhost:3333/api";
 
     // ── Utilitário: monta headers com Bearer token ─────────────────────────────
     private HttpHeaders headersComToken(String token) {
@@ -42,14 +42,14 @@ public class APIService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<UserBean> entity = new HttpEntity<>(user, headers);
-        restTemplate.postForObject(BASE_URL + "/api/auth/registrar", entity, String.class);
+        restTemplate.postForObject(BASE_URL + "/auth/registrar", entity, String.class);
     }
 
     public String logar(UserRequestBean credentials) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<UserRequestBean> entity = new HttpEntity<>(credentials, headers);
-        return restTemplate.postForObject(BASE_URL + "/api/auth/logar", entity, String.class);
+        return restTemplate.postForObject(BASE_URL + "/auth/logar", entity, String.class);
     }
 
     // ── EDITAIS ───────────────────────────────────────────────────────────────
@@ -57,7 +57,7 @@ public class APIService {
     public List<EditalBean> listarEditais(String token) {
         HttpEntity<Void> entity = new HttpEntity<>(headersComToken(token));
         ResponseEntity<EditalBean[]> response = restTemplate.exchange(
-                BASE_URL + "/api/editais",
+                BASE_URL + "/editais",
                 HttpMethod.GET,
                 entity,
                 EditalBean[].class);
@@ -66,7 +66,7 @@ public class APIService {
 
     public void criarEdital(EditalBean edital, String token) {
         HttpEntity<EditalBean> entity = new HttpEntity<>(edital, headersComToken(token));
-        restTemplate.postForObject(BASE_URL + "/api/editais/criar", entity, String.class);
+        restTemplate.postForObject(BASE_URL + "/editais/criar", entity, String.class);
     }
 
     // ── LANCES ────────────────────────────────────────────────────────────────
@@ -74,6 +74,6 @@ public class APIService {
     public void registrarLance(Long editalId, LancesBean lance, String token) {
         HttpEntity<LancesBean> entity = new HttpEntity<>(lance, headersComToken(token));
         // Atenção: o backend tem typo "laces" — manter igual ao backend
-        restTemplate.postForObject(BASE_URL + "/api/editais/" + editalId + "/laces", entity, String.class);
+        restTemplate.postForObject(BASE_URL + "/editais/" + editalId + "/laces", entity, String.class);
     }
 }

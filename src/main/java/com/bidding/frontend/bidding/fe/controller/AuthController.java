@@ -4,15 +4,11 @@
  */
 package com.bidding.frontend.bidding.fe.controller;
 
+
 import com.bidding.frontend.bidding.fe.model.UserBean;
 import com.bidding.frontend.bidding.fe.model.UserRequestBean;
-import com.bidding.frontend.bidding.fe.service.APIService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import com.bidding.frontend.bidding.fe.service.AuthRestClientService;
 import jakarta.servlet.http.HttpSession;
-import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,70 +18,59 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class AuthController {
-
+    
+    // Injeção do serviço de autenticação para delegar a lógica de login.    
     @Autowired
-    private APIService apiService;
-
-    // Mesma secret do backend (application.properties do back)
-    private static final String SECRET = "dXVpZC1zZWNyZXQta2V5LXBhcmEtaG1hYy1zaGEyNTY=";
-
-    // ── LOGIN ─────────────────────────────────────────────────────────────────
-
+    private AuthRestClientService restService;
+    
+    // Tratador para requisições GET no caminho raiz "/".
+    // Retorna o nome da view Thymeleaf "index".
+    @GetMapping("/")
+    public String home(
+            HttpSession session
+    ) {
+        return "index";
+    }
+    
+    // Tratador para requisições GET em "/login".
+    // Prepara o modelo com um objeto UserRequestDTO vazio para preencher o formulário.
     @GetMapping("/login")
-    public String exibirLogin(Model model) {
-        model.addAttribute("credentials", new UserRequestBean());
+    public String login(Model model) {
+        UserRequestBean credenciais = new UserRequestBean();
+        model.addAttribute("credenciais", credenciais);
         return "login";
     }
-
-    @PostMapping("/login")
-    public String processarLogin(@ModelAttribute UserRequestBean credentials,
-                                  HttpSession session, Model model) {
-        try {
-            String token = apiService.logar(credentials);
-
-            // Extrai role e nome do token JWT para guardar na sessão
-            SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET));
-            Claims claims = Jwts.parser().verifyWith(key).build()
-                    .parseSignedClaims(token).getPayload();
-
-            session.setAttribute("token", token);
-            session.setAttribute("role", claims.get("role", String.class));
-            session.setAttribute("nome", claims.get("nome", String.class));
-            session.setAttribute("userId", claims.get("id", Long.class));
-
-            return "redirect:/editais";
-        } catch (Exception e) {
-            model.addAttribute("erro", "E-mail ou senha inválidos.");
-            model.addAttribute("credentials", credentials);
-            return "login";
-        }
+    
+    // Tratador para requisições POST em "/logar".
+    // Recebe as credenciais submetidas pelo formulário e tenta autenticar.
+    @PostMapping("/logar")
+    public String logar(@ModelAttribute UserRequestBean credenciais, HttpSession session) {
+        // Chama o serviço de autenticação para obter um token JWT ou similar.
+        String token = restService.logar(credenciais);
+        // Armazena o token na sessão HTTP para uso posterior.
+        System.out.println("token: "+token);
+        session.setAttribute("token", token);
+        // Redireciona de volta para a página inicial após login bem sucedido.
+        return "redirect:/";
     }
-
-    // ── REGISTER ──────────────────────────────────────────────────────────────
-
-    @GetMapping("/register")
-    public String exibirCadastro(Model model) {
-        model.addAttribute("user", new UserBean());
-        return "register";
+    
+    @GetMapping("/registrar")
+    public String registrar(Model model) {
+        UserBean newUser = new UserBean();
+        model.addAttribute("user", newUser);
+        return "registrar";
     }
-
-    @PostMapping("/register")
-    public String processarCadastro(@ModelAttribute UserBean user, Model model) {
-        try {
-            apiService.registrarUsuario(user);
-            return "redirect:/login?cadastro=ok";
-        } catch (Exception e) {
-            model.addAttribute("erro", "Erro ao cadastrar: " + e.getMessage());
-            model.addAttribute("user", user);
-            return "register";
-        }
-    }
-
-    // ── LOGOUT ────────────────────────────────────────────────────────────────
-
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
+    
+    @PostMapping("/registrar")
+    public String mandarRegistro(@ModelAttribute UserBean user) {
+        restService.registrar(user);
         return "redirect:/login";
     }
+    
+    @GetMapping("/editais")
+    public String listarEditais(String token) {
+        restService.listarEditais(token);
+        return "editais";
+    }
+    
 }

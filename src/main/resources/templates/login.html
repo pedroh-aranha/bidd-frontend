@@ -22,20 +22,20 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     </div>
     <div class="alert alert-error" th:if="${erro}" th:text="${erro}"></div>
 
-    <form th:action="@{/login}" th:object="${credentials}" method="post">
+    <form th:action="@{/logar}" th:object="${credenciais}" method="post">
         <div class="form-group">
             <label>E-mail <span class="req">*</span></label>
-            <input type="email" th:field="*{email}" placeholder="seu@email.com" required/>
+            <input type="email" th:field="*{email}" placeholder="seu@email.com" />
         </div>
         <div class="form-group">
             <label>Senha <span class="req">*</span></label>
             <input type="password" th:field="*{senha}" placeholder="Sua senha" required/>
         </div>
         <hr/>
-        <button type="submit" class="btn-primary">Entrar</button>
+        <button type="submit" class="btn-primary" a href="editais">Entrar</button>
     </form>
 
-    <p class="bottom-link">Não tem conta? <a th:href="@{/register}">Cadastre-se</a></p>
+    <p class="bottom-link">Não tem conta? <a th:href="@{/registrar}">Cadastre-se</a></p>
 </div>
 </body>
 </html>

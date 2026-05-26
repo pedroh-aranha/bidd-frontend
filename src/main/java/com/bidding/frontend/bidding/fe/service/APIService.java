@@ -1,7 +1,7 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+ *
 package com.bidding.frontend.bidding.fe.service;
 
 import com.bidding.frontend.bidding.fe.model.EditalBean;
@@ -17,11 +17,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
+*/
 /**
  *
  * @author Aluno
  */
+/*
 @Service
 public class APIService {
     
@@ -77,3 +78,4 @@ public class APIService {
         restTemplate.postForObject(BASE_URL + "/editais/" + editalId + "/laces", entity, String.class);
     }
 }
+*/

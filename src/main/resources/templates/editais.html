@@ -21,43 +21,96 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         </div>
     </div>
 
-    <div class="alert alert-success" th:if="${param.criado}">Edital criado com sucesso!</div>
-    <div class="alert alert-error" th:if="${param.erro == 'acesso_negado'}">Acesso negado: apenas COMPRADOR pode criar editais.</div>
+       <div class="d-flex justify-content-between align-items-center mb-4">
 
-    <div th:if="${#lists.isEmpty(editais)}" class="empty-state">
-        <p>Nenhum edital encontrado.</p>
+        <h2 class="fw-bold mb-0">
+            Lista de Editais
+        </h2>
+
+        <a th:href="@{/editais/novo}"
+           class="btn btn-primary">
+            Novo Edital
+        </a>
+
     </div>
 
-    <table th:if="${!#lists.isEmpty(editais)}" class="table">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Título</th>
-                <th>Descrição</th>
-                <th>Fechamento</th>
-                <th>Status</th>
-                <th>Ação</th>
-            </tr>
-        </thead>
-        <tbody>           
-            <tr th:each="edital : ${editais}">
-                <td th:text="${edital.id}"></td>
-                <td>
-                    <span th:text="${edital.titulo}"></span>
-                    <span th:if="${edital.urgente != null and edital.urgente}" class="badge-urgente">⚠️ Urgente</span>
-                </td>
-                <td th:text="${edital.descricao}"></td>
-                <td th:text="${edital.datafechamento}"></td>
-                <td>
-                    <span class="badge" th:classappend="${edital.status == 'ABERTO'} ? 'badge-aberto' : 'badge-fechado'"
-                          th:text="${edital.status}"></span>
-                </td>
-                <td>
-                    <a th:href="@{/editais/{id}(id=${edital.id})}" class="btn-secondary btn-sm">Ver</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- TABELA -->
+    <div class="table-responsive"
+         th:if="${!#lists.isEmpty(editais)}">
+
+        <table class="table table-hover align-middle">
+
+            <thead class="table-dark">
+
+                <tr>
+                    <th>#</th>
+                    <th>Título</th>
+                    <th>Descrição</th>
+                    <th>Fechamento</th>
+                    <th>Status</th>
+                    <th class="text-center">Ação</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr th:each="edital : ${editais}">
+
+                    <td th:text="${edital.id}"></td>
+
+                    <td>
+
+                        <div class="fw-semibold"
+                             th:text="${edital.titulo}">
+                        </div>
+
+                        <span th:if="${edital.urgente != null and edital.urgente}"
+                              class="badge bg-danger mt-1">
+
+                            ⚠️ Urgente
+
+                        </span>
+
+                    </td>
+
+                    <td class="text-muted"
+                        th:text="${edital.descricao}">
+                    </td>
+
+                    <td th:text="${edital.datafechamento}">
+                    </td>
+
+                    <td>
+
+                        <span class="badge"
+                              th:classappend="${edital.status == 'ABERTO'} 
+                              ? ' bg-success' 
+                              : ' bg-secondary'"
+
+                              th:text="${edital.status}">
+                        </span>
+
+                    </td>
+
+                    <td class="text-center">
+
+                        <a th:href="@{/editais/{id}(id=${edital.id})}"
+                           class="btn btn-outline-primary btn-sm">
+
+                            Ver
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
 </main>
 </body>
 </html>

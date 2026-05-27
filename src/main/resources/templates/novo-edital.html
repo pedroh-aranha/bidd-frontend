@@ -3,42 +3,141 @@
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
 -->
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+
 <head>
     <meta charset="UTF-8"/>
     <title>Novo Edital – Bidding System</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
-<body>
+
+<body class="bg-light">
 
 <div th:replace="~{layout :: navbar(${role}, ${nome})}"></div>
 
-<main class="container">
-    <a th:href="@{/editais}" class="btn-secondary btn-sm">← Voltar</a>
-    <div class="card">
-        <div class="card-header">
-            <h2>Criar Novo Edital</h2>
-            <p>Apenas compradores podem criar editais</p>
+<main class="container py-5">
+
+    <!-- VOLTAR -->
+    <div class="mb-3">
+
+        <a th:href="@{/editais}"
+           class="btn btn-outline-secondary btn-sm">
+
+            ← Voltar
+
+        </a>
+
+    </div>
+
+    <!-- CARD -->
+    <div class="card shadow border-0 rounded-4">
+
+        <!-- HEADER -->
+        <div class="card-header bg-dark text-white rounded-top-4 p-4">
+
+            <h2 class="mb-1 fw-bold">
+                Criar Novo Edital
+            </h2>
+
+            <p class="mb-0 text-light">
+                Apenas compradores podem criar editais
+            </p>
+
         </div>
 
-        <div class="alert alert-error" th:if="${erro}" th:text="${erro}"></div>
+        <!-- BODY -->
+        <div class="card-body p-4">
 
-        <form th:action="@{/editais/novo}" th:object="${edital}" method="post">
-            <div class="form-group">
-                <label>Título <span class="req">*</span></label>
-                <input type="text" th:field="*{titulo}" placeholder="Título do edital" required/>
+            <!-- ERRO -->
+            <div class="alert alert-danger"
+                 th:if="${erro}"
+                 th:text="${erro}">
             </div>
-            <div class="form-group">
-                <label>Descrição <span class="req">*</span></label>
-                <textarea th:field="*{descricao}" rows="4" placeholder="Descreva o edital..." required></textarea>
-            </div>
-            <div class="form-group">
-                <label>Data de Fechamento <span class="req">*</span></label>
-                <input type="date" th:field="*{datafechamento}" required/>
-            </div>
-            <hr/>
-            <button type="submit" class="btn-primary">Criar Edital</button>
-        </form>
+
+            <!-- FORM -->
+            <form th:action="@{/editais/novo}"
+                  th:object="${edital}"
+                  method="post">
+
+                <!-- TITULO -->
+                <div class="mb-3">
+
+                    <label class="form-label fw-semibold">
+
+                        Título
+                        <span class="text-danger">*</span>
+
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           th:field="*{titulo}"
+                           placeholder="Título do edital"
+                           required>
+
+                </div>
+
+                <!-- DESCRICAO -->
+                <div class="mb-3">
+
+                    <label class="form-label fw-semibold">
+
+                        Descrição
+                        <span class="text-danger">*</span>
+
+                    </label>
+
+                    <textarea class="form-control"
+                              th:field="*{descricao}"
+                              rows="5"
+                              placeholder="Descreva o edital..."
+                              required>
+                    </textarea>
+
+                </div>
+
+                <!-- DATA -->
+                <div class="mb-4">
+
+                    <label class="form-label fw-semibold">
+
+                        Data de Fechamento
+                        <span class="text-danger">*</span>
+
+                    </label>
+
+                    <input type="date"
+                           class="form-control"
+                           th:field="*{datafechamento}"
+                           required>
+
+                </div>
+
+                <!-- BOTOES -->
+                <div class="d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        Criar Edital
+
+                    </button>
+
+                    <a th:href="@{/editais}"
+                       class="btn btn-outline-secondary">
+
+                        Cancelar
+
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </main>
 </body>

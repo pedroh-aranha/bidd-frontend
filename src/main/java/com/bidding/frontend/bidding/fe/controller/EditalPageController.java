@@ -1,7 +1,7 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+ *//*
 package com.bidding.frontend.bidding.fe.controller;
 
 import com.bidding.frontend.bidding.fe.model.EditalBean;
@@ -34,7 +34,7 @@ public class EditalPageController {
 
     @GetMapping("/editais")
     public String listarEditais(@RequestParam(required = false) Boolean urgente,
-                                 HttpSession session, Model model) {
+        HttpSession session, Model model) {
         String token = (String) session.getAttribute("token");
         if (token == null) return "redirect:/login";
 
@@ -139,4 +139,5 @@ public class EditalPageController {
             return "novo-edital";
         }
     }
-}
+
+}*/

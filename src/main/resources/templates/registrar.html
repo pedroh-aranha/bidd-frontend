@@ -19,31 +19,26 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
     <div class="alert alert-error" th:if="${erro}" th:text="${erro}"></div>
 
-    <form th:action="@{/register}" th:object="${user}" method="post">
+    <form th:action="@{/registrar}" th:object="${user}" method="post">
         <div class="form-group">
-            <label>Nome completo <span class="req">*</span></label>
+            <label>Nome completo <span class="req"></span></label>
             <input type="text" th:field="*{nome}" placeholder="João da Silva" required/>
         </div>
         <div class="form-group">
-            <label>E-mail <span class="req">*</span></label>
+            <label>E-mail <span class="req">       </span></label>
             <input type="email" th:field="*{email}" placeholder="seu@email.com" required/>
         </div>
         <div class="form-group">
-            <label>Senha <span class="req">*</span></label>
+            <label>Senha <span class="req">        </span></label>
             <input type="password" th:field="*{senha}" placeholder="Mínimo 6 caracteres" required minlength="6"/>
         </div>
-        <div class="form-group">
-            <label>Perfil</label>
-            <select th:field="*{role}">
-                <option value="FORNECEDOR">Fornecedor</option>
-                <option value="COMPRADOR">Comprador</option>
-            </select>
-        </div>
-        <hr/>
+        <br>
         <button type="submit" class="btn-primary">Cadastrar</button>
-    </form>
-
-    <p class="bottom-link">Já tem conta? <a th:href="@{/login}">Faça login</a></p>
+    </form>      
+        <hr/>
+        <li class="nav-item" role="presentation">
+            <p class="bottom-link">Já tem conta? <br><a th:href="@{/login}">Faça login</a></p>
+         </li>
 </div>
 </body>
 </html>

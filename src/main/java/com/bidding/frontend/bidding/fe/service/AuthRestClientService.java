@@ -100,5 +100,14 @@ public class AuthRestClientService {
         return Arrays.asList(editais);
     }
     
+    public EditalBean criarEdital(EditalBean edital, String token) {
+        return restClient.post()
+                .uri("/editais")
+                .header("Authorization", "Bearer" + token)
+                .body(edital)
+                .retrieve()
+                .body(EditalBean.class);
+        
+    }
    
 }

@@ -14,28 +14,31 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <div class="card-header">
         <div class="logo">🏷️</div>
         <h1>Entrar</h1>
-        <p>Acesse sua conta no sistema</p>
+        <p>Faça login para continuar.</p>
     </div>
 
-    <div class="alert alert-success" th:if="${param.cadastro}">
-        Cadastro realizado! Faça login para continuar.
-    </div>
-    <div class="alert alert-error" th:if="${erro}" th:text="${erro}"></div>
-
-    <form th:action="@{/logar}" th:object="${credenciais}" method="post">
-        <div class="form-group">
-            <label>E-mail <span class="req">*</span></label>
-            <input type="email" th:field="*{email}" placeholder="seu@email.com" />
         </div>
-        <div class="form-group">
-            <label>Senha <span class="req">*</span></label>
-            <input type="password" th:field="*{senha}" placeholder="Sua senha" required/>
-        </div>
-        <hr/>
-        <button type="submit" class="btn-primary" a href="editais">Entrar</button>
-    </form>
+        <div class="alert alert-error" th:if="${erro}" th:text="${erro}"></div>
+        
+    
+        <form th:action="@{/logar}" th:object="${credenciais}" method="post">
+            <div class="form-group">
+                <label>E-mail <span class="req">  </span></label>
+                <input type="email" th:field="*{email}" placeholder="seu@email.com" />
+            </div>
+            <div class="form-group">
+                <label>Senha <span class="req">   </span></label>
+                <input type="password" th:field="*{senha}" placeholder="senha" required/>
+            </div>
+            <button type="submit" class="btn-primary">Entrar</button>
+        </form>
+            <hr/>
+            <li class="nav-item" role="presentation">
+                 <p class="bottom-link">Não tem Cadastro! <br><a th:href="@{/registrar}">Cadastre-se</a></p>
+              </li>
+              
+            
 
-    <p class="bottom-link">Não tem conta? <a th:href="@{/registrar}">Cadastre-se</a></p>
 </div>
 </body>
 </html>

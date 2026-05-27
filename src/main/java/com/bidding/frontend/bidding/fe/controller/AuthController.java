@@ -5,12 +5,14 @@
 package com.bidding.frontend.bidding.fe.controller;
 
 
+import com.bidding.frontend.bidding.fe.model.EditalBean;
 import com.bidding.frontend.bidding.fe.model.UserBean;
 import com.bidding.frontend.bidding.fe.model.UserRequestBean;
 import com.bidding.frontend.bidding.fe.service.AuthRestClientService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import java.util.List;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,10 +28,8 @@ public class AuthController {
     // Tratador para requisições GET no caminho raiz "/".
     // Retorna o nome da view Thymeleaf "index".
     @GetMapping("/")
-    public String home(
-            HttpSession session
-    ) {
-        return "index";
+    public String home(HttpSession session) {
+        return "redirect:/editais";
     }
     
     // Tratador para requisições GET em "/login".
@@ -51,7 +51,7 @@ public class AuthController {
         System.out.println("token: "+token);
         session.setAttribute("token", token);
         // Redireciona de volta para a página inicial após login bem sucedido.
-        return "redirect:/";
+        return "redirect:/editais";
     }
     
     @GetMapping("/registrar")
@@ -68,9 +68,30 @@ public class AuthController {
     }
     
     @GetMapping("/editais")
-    public String listarEditais(String token) {
-        restService.listarEditais(token);
+    public String listarEditais(Model model, HttpSession session) {
+        String token = (String) session.getAttribute("token");
+        System.out.println("TOKEN: " + token);
+        List<EditalBean> editais = restService.listarEditais(token);
+        model.addAttribute("editais", editais );
         return "editais";
     }
     
+    @GetMapping("/editais/novo")
+    public String novoEdital(Model model, HttpSession session) {
+        String token = (String) session.getAttribute("token");
+
+        if (token == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("edital", new EditalBean());
+        return "novo-edital";
+    }
+    
+    @PostMapping("/editais/novo")
+    public String criarEdital(@ModelAttribute EditalBean edital, HttpSession session) {
+        String token = (String) session.getAttribute("token");
+        restService.criarEdital(edital, token);
+        return "redirect:editais";
+    }
 }

@@ -7,38 +7,87 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 <head>
     <meta charset="UTF-8"/>
     <title>Login – Bidding System</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
-<body class="auth-page">
-<div class="card">
-    <div class="card-header">
-        <div class="logo">🏷️</div>
-        <h1>Entrar</h1>
-        <p>Faça login para continuar.</p>
-    </div>
+
+<body class="bg-light">
+
+<main class="container py-5 d-flex justify-content-center">
+
+    <div class="card shadow border-0 rounded-4"
+         style="max-width: 450px; width: 100%;">
+
+        <div class="card-header bg-info text-white text-center rounded-top-4 p-4">
+
+            <div class="logo fs-1">🏷️</div>
+
+            <h1 class="h3 mt-2">Entrar</h1>
+
+            <p class="mb-0">
+                Faça login para continuar.
+            </p>
+        </div>
+
+        <div class="card-body p-4">
+
+            <div class="alert alert-danger"
+                 th:if="${erro}"
+                 th:text="${erro}">
+            </div>
+
+            <form th:action="@{/logar}"
+                  th:object="${credenciais}"
+                  method="post">
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">
+                        E-mail
+                    </label>
+
+                    <input type="email"
+                           class="form-control"
+                           th:field="*{email}"
+                           placeholder="seu@email.com"
+                           required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">
+                        Senha
+                    </label>
+
+                    <input type="password"
+                           class="form-control"
+                           th:field="*{senha}"
+                           placeholder="Senha"
+                           required>
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary w-100">
+                    Entrar
+                </button>
+
+            </form>
+
+            <div class="text-center mt-4">
+                <p class="mb-1">
+                    Não tem cadastro?
+                </p>
+
+                <a th:href="@{/registrar}">
+                    Cadastre-se aqui
+                </a>
+            </div>
 
         </div>
-        <div class="alert alert-error" th:if="${erro}" th:text="${erro}"></div>
-        
-    
-        <form th:action="@{/logar}" th:object="${credenciais}" method="post">
-            <div class="form-group">
-                <label>E-mail <span class="req">  </span></label>
-                <input type="email" th:field="*{email}" placeholder="seu@email.com" />
-            </div>
-            <div class="form-group">
-                <label>Senha <span class="req">   </span></label>
-                <input type="password" th:field="*{senha}" placeholder="senha" required/>
-            </div>
-            <button type="submit" class="btn-primary">Entrar</button>
-        </form>
-            <hr/>
-            <li class="nav-item" role="presentation">
-                 <p class="bottom-link">Não tem Cadastro! <br><a th:href="@{/registrar}">Cadastre-se</a></p>
-              </li>
-              
-            
+    </div>
 
-</div>
+</main>
+
 </body>
 </html>

@@ -10,7 +10,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <meta charset="UTF-8"/>
     <title>Novo Edital – Bidding System</title>
 
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
@@ -19,18 +18,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
 <body class="bg-light">
 
-<div th:replace="~{layout :: navbar(${role}, ${nome})}"></div>
 
 <main class="container py-5">
 
-    <!-- VOLTAR -->
     <div class="mb-3">
-
         <a th:href="@{/editais}"
            class="btn btn-outline-secondary btn-sm">
-
             ← Voltar
-
         </a>
 
     </div>
@@ -51,21 +45,17 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
         </div>
 
-        <!-- BODY -->
         <div class="card-body p-4">
 
-            <!-- ERRO -->
             <div class="alert alert-danger"
                  th:if="${erro}"
                  th:text="${erro}">
             </div>
 
-            <!-- FORM -->
             <form th:action="@{/editais/novo}"
                   th:object="${edital}"
                   method="post">
 
-                <!-- TITULO -->
                 <div class="mb-3">
 
                     <label class="form-label fw-semibold">
@@ -83,7 +73,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
                 </div>
 
-                <!-- DESCRICAO -->
                 <div class="mb-3">
 
                     <label class="form-label fw-semibold">
@@ -102,7 +91,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
                 </div>
 
-                <!-- DATA -->
                 <div class="mb-4">
 
                     <label class="form-label fw-semibold">
@@ -119,7 +107,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
                 </div>
 
-                <!-- BOTOES -->
                 <div class="d-flex gap-2">
 
                     <button type="submit"

@@ -44,14 +44,34 @@ public class AuthController {
     // Tratador para requisições POST em "/logar".
     // Recebe as credenciais submetidas pelo formulário e tenta autenticar.
     @PostMapping("/logar")
-    public String logar(@ModelAttribute UserRequestBean credenciais, HttpSession session) {
+    public String logar(@ModelAttribute UserRequestBean credenciais, HttpSession session, Model model) {
         // Chama o serviço de autenticação para obter um token JWT ou similar.
         String token = restService.logar(credenciais);
         // Armazena o token na sessão HTTP para uso posterior.
-        System.out.println("token: "+token);
+        if(token == null) {
+            model.addAttribute("erro", "E-mail ou senha inválidos");
+            model.addAttribute("credenciais", credenciais);
+            return "login";
+        }
+        // Decodifica o payload do JWT (parte do meio, separada por ".")
+        String[] partes = token.split("\\.");
+        String payload = new String(java.util.Base64.getUrlDecoder().decode(partes[1]));
+          // Extrai nome e role do JSON do payload
+        String nome = payload.replaceAll(".*\"nome\":\"([^\"]+)\".*", "$1");
+        String role = payload.replaceAll(".*\"role\":\"([^\"]+)\".*", "$1");
+        // Armazena o token na sessão HTTP para uso posterior.
         session.setAttribute("token", token);
+        session.setAttribute("nome", nome);
+        session.setAttribute("role", role);
+        
         // Redireciona de volta para a página inicial após login bem sucedido.
         return "redirect:/editais";
+    }
+    
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.setAttribute("token", "");
+        return "redirect:/login";
     }
     
     @GetMapping("/registrar")
@@ -62,36 +82,14 @@ public class AuthController {
     }
     
     @PostMapping("/registrar")
-    public String mandarRegistro(@ModelAttribute UserBean user) {
+    public String mandarRegistro(@ModelAttribute UserBean user, Model model) {
+        if(!user.getSenha().equals(user.getConfirmarSenha())) {
+           model.addAttribute("erro", "as senhas nao coincidem");
+           model.addAttribute("user", user);
+           return "registrar";
+        }
         restService.registrar(user);
         return "redirect:/login";
     }
-    
-    @GetMapping("/editais")
-    public String listarEditais(Model model, HttpSession session) {
-        String token = (String) session.getAttribute("token");
-        System.out.println("TOKEN: " + token);
-        List<EditalBean> editais = restService.listarEditais(token);
-        model.addAttribute("editais", editais );
-        return "editais";
-    }
-    
-    @GetMapping("/editais/novo")
-    public String novoEdital(Model model, HttpSession session) {
-        String token = (String) session.getAttribute("token");
 
-        if (token == null) {
-            return "redirect:/login";
-        }
-
-        model.addAttribute("edital", new EditalBean());
-        return "novo-edital";
-    }
-    
-    @PostMapping("/editais/novo")
-    public String criarEdital(@ModelAttribute EditalBean edital, HttpSession session) {
-        String token = (String) session.getAttribute("token");
-        restService.criarEdital(edital, token);
-        return "redirect:editais";
-    }
 }

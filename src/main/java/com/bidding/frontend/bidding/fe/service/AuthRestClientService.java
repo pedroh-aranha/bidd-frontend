@@ -9,8 +9,6 @@ import com.bidding.frontend.bidding.fe.model.UserBean;
 import com.bidding.frontend.bidding.fe.model.UserRequestBean;
 import java.util.Arrays;
 import java.util.List;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -71,6 +69,7 @@ public class AuthRestClientService {
     
     public void registrar(UserBean user ) {
         user.setRole("FORNECEDOR");
+        user.setConfirmarSenha(null);
         String retorno = 
             restClient
                 .post()
@@ -79,6 +78,7 @@ public class AuthRestClientService {
                 .retrieve()
                 .body(String.class);
     }
+
 
     /**
      * Lista os editais do backend usando o token JWT no cabeçalho Authorization.

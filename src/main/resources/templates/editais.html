@@ -55,7 +55,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             </a>
 
             <!-- LOGOUT -->
-            <a th:href="@{/login}"
+            <a th:href="@{/logout}"
                class="btn btn-danger">
 
                 Sair
@@ -88,7 +88,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     <thead class="table-dark">
 
                     <tr>
-                        <th>#</th>
                         <th>Título</th>
                         <th>Descrição</th>
                         <th>Fechamento</th>
@@ -102,7 +101,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
                     <tr th:each="edital : ${editais}">
 
-                        <td th:text="${edital.id}"></td>
 
                         <td>
 

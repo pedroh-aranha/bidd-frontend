@@ -3,50 +3,100 @@
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
 -->
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
 <head>
     <meta charset="UTF-8"/>
     <title>Edital – Bidding System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
-<body>
+<body class="bg-light">
 
 <div th:replace="~{layout :: navbar(${role}, ${nome})}"></div>
 
-<main class="container">
-    <a th:href="@{/editais}" class="btn-secondary btn-sm">← Voltar</a>
+<main class="container py-5">
 
-    <div class="card-detail">
-        <h2 th:text="${edital.titulo}"></h2>
-        <p class="descricao" th:text="${edital.descricao}"></p>
+    <!-- VOLTAR -->
+    <div class="mb-3">
+        <a th:href="@{/editais}" class="btn btn-outline-secondary btn-sm">← Voltar</a>
+    </div>
 
-        <div class="meta">
-            <span>📅 Fechamento: <strong th:text="${edital.datafechamento}"></strong></span>
-            <span class="badge" th:classappend="${edital.status == 'ABERTO'} ? 'badge-aberto' : 'badge-fechado'"
-                  th:text="${edital.status}"></span>
-            <span th:if="${edital.urgente}" class="badge-urgente">⚠️ Urgente</span>
+    <!-- ALERTAS -->
+    <div class="alert alert-success" th:if="${param.sucesso}">
+        ✅ Lance enviado com sucesso!
+    </div>
+    <div class="alert alert-danger" th:if="${param.erro}" th:text="'Erro: ' + ${param.erro}"></div>
+
+    <!-- CARD PRINCIPAL -->
+    <div class="card shadow border-0 rounded-4 mb-4">
+
+        <!-- HEADER -->
+        <div class="card-header bg-dark text-white rounded-top-4 p-4 d-flex justify-content-between align-items-start flex-wrap gap-3">
+            <div>
+                <h2 class="mb-1 fw-bold" th:text="${edital.titulo}"></h2>
+                <p class="mb-0 text-light" style="font-size:14px;">
+                    📅 Fechamento:
+                    <strong th:text="${edital.datafechamento}"></strong>
+                </p>
+            </div>
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+                <span class="badge fs-6"
+                      th:classappend="${edital.status == 'ABERTO'} ? 'bg-success' : 'bg-secondary'"
+                      th:text="${edital.status}">
+                </span>
+                <span th:if="${edital.urgente}" class="badge bg-warning text-dark fs-6">
+                    ⚠️ Urgente
+                </span>
+            </div>
+        </div>
+
+        <!-- BODY -->
+        <div class="card-body p-4">
+            <p class="text-muted mb-0" style="line-height:1.7;" th:text="${edital.descricao}"></p>
         </div>
     </div>
 
-    <div class="alert alert-success" th:if="${param.sucesso}">Lance enviado com sucesso!</div>
-    <div class="alert alert-error"   th:if="${param.erro}" th:text="'Erro: ' + ${param.erro}"></div>
+    <!-- FORMULÁRIO DE LANCE: só FORNECEDOR e edital ABERTO -->
+    <div th:if="${role == 'FORNECEDOR' and edital.status == 'ABERTO'}"
+         class="card shadow border-0 rounded-4">
 
-    <!-- Formulário de lance: só FORNECEDOR e edital ABERTO -->
-    <div th:if="${role == 'FORNECEDOR' and edital.status == 'ABERTO'}" class="card">
-        <h3>Registrar Lance</h3>
-        <form th:action="@{/editais/{id}/lance(id=${edital.id})}" th:object="${lance}" method="post">
-            <div class="form-group">
-                <label>Valor do lance (R$) <span class="req">*</span></label>
-                <input type="number" th:field="*{valor}" step="0.01" min="0.01"
-                       placeholder="Ex.: 1500.00" required/>
-            </div>
-            <button type="submit" class="btn-primary">Enviar Lance</button>
-        </form>
+        <div class="card-header bg-dark text-white rounded-top-4 p-4">
+            <h2 class="mb-1 fw-bold">🏷️ Registrar Lance</h2>
+            <p class="mb-0 text-light">Informe o valor do seu lance para este edital.</p>
+        </div>
+
+        <div class="card-body p-4">
+            <form th:action="@{/editais/{id}/lance(id=${edital.id})}"
+                  th:object="${lance}"
+                  method="post">
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">
+                        Valor do lance (R$)
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input type="number"
+                           class="form-control"
+                           th:field="*{valor}"
+                           step="0.01"
+                           min="0.01"
+                           placeholder="Ex.: 1500.00"
+                           required/>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Enviar Lance</button>
+
+            </form>
+        </div>
     </div>
 
-    <div th:if="${edital.status == 'ENCERRADO'}" class="alert alert-error">
-        Este edital está encerrado para novos lances.
+    <!-- EDITAL ENCERRADO -->
+    <div th:if="${edital.status == 'ENCERRADO'}" class="alert alert-danger">
+        🔒 Este edital está encerrado para novos lances.
     </div>
+
 </main>
 </body>
 </html>

@@ -33,20 +33,20 @@ public class EditalPageController {
         if (token == null) return "redirect:/login";
 
         try {
-            List<EditalBean> editais = restService.listarEditais(token);
+            List<EditalBean> editais;
 
             if (Boolean.TRUE.equals(urgente)) {
-                editais = editais.stream()
-                        .filter(e -> Boolean.TRUE.equals(e.getUrgente()))
-                        .collect(Collectors.toList());
+                editais = restService.listarUrgentes(token); // ← chama endpoint /urgentes
                 model.addAttribute("urgente", true);
+            } else {
+                editais = restService.listarEditais(token); // ← chama endpoint normal
             }
 
             model.addAttribute("editais", editais);
             model.addAttribute("nome", session.getAttribute("nome"));
             model.addAttribute("role", session.getAttribute("role"));
             return "editais";
-            
+
         } catch (Exception e) {
             return "redirect:/login";
         }

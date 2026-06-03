@@ -9,8 +9,10 @@ import com.bidding.frontend.bidding.fe.model.UserBean;
 import com.bidding.frontend.bidding.fe.model.UserRequestBean;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  *
@@ -67,16 +69,21 @@ public class AuthRestClientService {
                 .body(String.class);
     }
     
-    public void registrar(UserBean user ) {
+    public String registrar(UserBean user) {
+        if (!user.getSenha().equals(user.getConfirmarSenha())) {
+            return "As senhas não coincidem.";
+        }
         user.setRole("FORNECEDOR");
         user.setConfirmarSenha(null);
-        String retorno = 
-            restClient
-                .post()
-                .uri("/auth/registrar")
-                .body(user)
-                .retrieve()
-                .body(String.class);
+
+        restClient
+            .post()
+            .uri("/auth/registrar")
+            .body(user)
+            .retrieve()
+            .body(String.class);
+
+        return null;
     }
 
 
@@ -100,14 +107,23 @@ public class AuthRestClientService {
         return Arrays.asList(editais);
     }
     
-    public EditalBean criarEdital(EditalBean edital, String token) {
-        return restClient.post()
-                .uri("/editais")
-                .header("Authorization", "Bearer" + token)
+    public List<EditalBean> listarUrgentes(String token) {
+        EditalBean[] editais = restClient.get()
+                .uri("/editais/urgentes")
+                .header("Authorization", "Bearer " + token)
+                .retrieve()
+                .body(EditalBean[].class);
+        return Arrays.asList(editais);
+    }
+    
+    public void criarEdital(EditalBean edital, String token) {
+        restClient.post()
+                .uri("/editais/criar")
+                .header("Authorization", "Bearer " + token)
                 .body(edital)
                 .retrieve()
-                .body(EditalBean.class);
-        
+                .body(String.class);
+
     }
    
 }

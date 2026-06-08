@@ -16,12 +16,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 /**
  *
- * @author Aluno
-/**
- * Serviço de autenticação usando RestClient em vez de RestTemplate.
+ * @author Aluno /** Serviço de autenticação usando RestClient em vez de
+ * RestTemplate.
  *
- * Este serviço ilustra uma alternativa com uma API fluente mais simples.
- * Ele encapsula a chamada ao endpoint de autenticação em um único método.
+ * Este serviço ilustra uma alternativa com uma API fluente mais simples. Ele
+ * encapsula a chamada ao endpoint de autenticação em um único método.
  *
  * A ideia principal é construir um cliente HTTP uma vez e reutilizá-lo,
  * evitando a necessidade de montar objetos HttpEntity manualmente.
@@ -36,8 +35,8 @@ public class AuthRestClientService {
     /**
      * Construtor padrão do serviço.
      *
-     * Aqui criamos o RestClient apenas uma vez e configuramos a URL base
-     * comum para todas as requisições deste serviço.
+     * Aqui criamos o RestClient apenas uma vez e configuramos a URL base comum
+     * para todas as requisições deste serviço.
      */
     public AuthRestClientService() {
         this.restClient = RestClient.builder()
@@ -68,7 +67,7 @@ public class AuthRestClientService {
                 // Use outro DTO aqui se a API retornar um objeto JSON complexo.
                 .body(String.class);
     }
-    
+
     public String registrar(UserBean user) {
         if (!user.getSenha().equals(user.getConfirmarSenha())) {
             return "As senhas não coincidem.";
@@ -77,18 +76,18 @@ public class AuthRestClientService {
         user.setConfirmarSenha(null);
 
         restClient
-            .post()
-            .uri("/auth/registrar")
-            .body(user)
-            .retrieve()
-            .body(String.class);
+                .post()
+                .uri("/auth/registrar")
+                .body(user)
+                .retrieve()
+                .body(String.class);
 
         return null;
     }
 
-
     /**
-     * Lista os editais do backend usando o token JWT no cabeçalho Authorization.
+     * Lista os editais do backend usando o token JWT no cabeçalho
+     * Authorization.
      *
      * @param token token de autenticação recebido após o login
      * @return lista de editais retornada pela API
@@ -106,7 +105,7 @@ public class AuthRestClientService {
         // Converte o array para List para uso mais conveniente na aplicação.
         return Arrays.asList(editais);
     }
-    
+
     public List<EditalBean> listarUrgentes(String token) {
         EditalBean[] editais = restClient.get()
                 .uri("/editais/urgentes")
@@ -115,7 +114,7 @@ public class AuthRestClientService {
                 .body(EditalBean[].class);
         return Arrays.asList(editais);
     }
-    
+
     public void criarEdital(EditalBean edital, String token) {
         restClient.post()
                 .uri("/editais/criar")
@@ -125,5 +124,27 @@ public class AuthRestClientService {
                 .body(String.class);
 
     }
-   
+
+    public void registrarLance(Long idEdital, double valor, String token) {
+        java.util.Map<String, Object> body = new java.util.HashMap<>();
+        body.put("valor", valor);
+        body.put("data_lance", java.sql.Date.valueOf(java.time.LocalDate.now()));
+
+        restClient.post()
+                .uri("/editais/" + idEdital + "/lances")
+                .header("Authorization", "Bearer " + token)
+                .body(body)
+                .retrieve()
+                .body(String.class);
+    }
+
+    public List<com.bidding.frontend.bidding.fe.model.LancesBean> listarMeusLances(Long idEdital, String token) {
+        com.bidding.frontend.bidding.fe.model.LancesBean[] lances = restClient.get()
+                .uri("/editais/" + idEdital + "/lances")
+                .header("Authorization", "Bearer " + token)
+                .retrieve()
+                .body(com.bidding.frontend.bidding.fe.model.LancesBean[].class);
+        return Arrays.asList(lances);
+    }
+
 }

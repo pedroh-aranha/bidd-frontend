@@ -4,24 +4,28 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to c
 Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
 -->
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
-<head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Bidding System</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}"/>
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Bidding System</title>
+        <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    </head>
+    <body>
 
-<!-- FRAGMENTO: navbar -->
-<nav th:fragment="navbar(role, nome)">
-    <div class="nav-brand">🏷️ Bidding System</div>
-    <div class="nav-links">
-        <a th:href="@{/editais}">Editais</a>
-        <a th:if="${role == 'COMPRADOR'}" th:href="@{/editais/novo}">Novo Edital</a>
-        <span class="nav-user">Olá, <strong th:text="${nome}">Usuário</strong></span>
-        <a th:href="@{/logout}" class="btn-logout">Sair</a>
-    </div>
-</nav>
+        <!-- FRAGMENTO: navbar -->
+        <nav th:fragment="navbar(role, nome)">
+            <div class="nav-brand">🏷️ Bidding System</div>
+            <div class="nav-links">
+                <a th:if="${role == 'COMPRADOR'}" th:href="@{/editais/novo}">Novo Edital</a>
+                <h3 span class="nav-user">Olá, <strong th:text="${nome}">Usuário</strong></h3>
+                <a th:href="@{/logout}" class="btn-logout">Sair</a>
+            </div>
+        </nav>
 
-</body>
+        <!-- FRAGMENTO: footer -->
+        <footer th:fragment="footer" class="footer">
+            <p>© <span th:text="${#dates.year(#dates.createNow())}"></span> Pedro H. Aranha — Bidding System</p>
+        </footer>
+
+    </body>
 </html>

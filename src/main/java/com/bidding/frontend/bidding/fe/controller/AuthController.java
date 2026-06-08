@@ -4,7 +4,6 @@
  */
 package com.bidding.frontend.bidding.fe.controller;
 
-
 import com.bidding.frontend.bidding.fe.model.UserBean;
 import com.bidding.frontend.bidding.fe.model.UserRequestBean;
 import com.bidding.frontend.bidding.fe.service.AuthRestClientService;
@@ -16,21 +15,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-
 @Controller
 public class AuthController {
-    
+
     // Injeção do serviço de autenticação para delegar a lógica de login.    
     @Autowired
     private AuthRestClientService restService;
-    
+
     // Tratador para requisições GET no caminho raiz "/".
     // Retorna o nome da view Thymeleaf "index".
     @GetMapping("/")
     public String home(HttpSession session) {
         return "redirect:/editais";
     }
-    
+
     // Tratador para requisições GET em "/login".
     // Prepara o modelo com um objeto UserRequestDTO vazio para preencher o formulário.
     @GetMapping("/login")
@@ -39,47 +37,48 @@ public class AuthController {
         model.addAttribute("credenciais", credenciais);
         return "login";
     }
-    
+
     // Tratador para requisições POST em "/logar".
     // Recebe as credenciais submetidas pelo formulário e tenta autenticar.
     @PostMapping("/logar")
     public String logar(@ModelAttribute UserRequestBean credenciais, HttpSession session, Model model) {
-        // Chama o serviço de autenticação para obter um token JWT ou similar.
-        String token = restService.logar(credenciais);
-        // Armazena o token na sessão HTTP para uso posterior.
-        if(token == null) {
+        try {
+            String token = restService.logar(credenciais);
+            if (token == null) {
+                model.addAttribute("erro", "E-mail ou senha inválidos");
+                model.addAttribute("credenciais", credenciais);
+                return "login";
+            }
+            String[] partes = token.split("\\.");
+            String payload = new String(java.util.Base64.getUrlDecoder().decode(partes[1]));
+            String nome = payload.replaceAll(".*\\\"nome\\\":\\\"([^\\\"]+)\\\".*", "$1");
+            String role = payload.replaceAll(".*\\\"role\\\":\\\"([^\\\"]+)\\\".*", "$1");
+            session.setAttribute("token", token);
+            session.setAttribute("nome", nome);
+            session.setAttribute("role", role);
+            return "redirect:/editais";
+
+        } catch (Exception e) {
+            // ✅ Se o backend retornar 401/400, cai aqui e mostra mensagem na tela
             model.addAttribute("erro", "E-mail ou senha inválidos");
             model.addAttribute("credenciais", credenciais);
             return "login";
         }
-        // Decodifica o payload do JWT (parte do meio, separada por ".")
-        String[] partes = token.split("\\.");
-        String payload = new String(java.util.Base64.getUrlDecoder().decode(partes[1]));
-          // Extrai nome e role do JSON do payload
-        String nome = payload.replaceAll(".*\"nome\":\"([^\"]+)\".*", "$1");
-        String role = payload.replaceAll(".*\"role\":\"([^\"]+)\".*", "$1");
-        // Armazena o token na sessão HTTP para uso posterior.
-        session.setAttribute("token", token);
-        session.setAttribute("nome", nome);
-        session.setAttribute("role", role);
-        
-        // Redireciona de volta para a página inicial após login bem sucedido.
-        return "redirect:/editais";
     }
-    
+
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.setAttribute("token", "");
+        session.invalidate(); //  acaba ca sessão inteira
         return "redirect:/login";
     }
-    
+
     @GetMapping("/registrar")
     public String registrar(Model model) {
         UserBean newUser = new UserBean();
         model.addAttribute("user", newUser);
         return "registrar";
     }
-    
+
     @PostMapping("/registrar")
     public String mandarRegistro(@ModelAttribute UserBean user, Model model) {
         String erro = restService.registrar(user);

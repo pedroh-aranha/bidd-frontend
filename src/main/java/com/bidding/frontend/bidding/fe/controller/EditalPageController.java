@@ -9,7 +9,6 @@ import com.bidding.frontend.bidding.fe.model.LancesBean;
 import com.bidding.frontend.bidding.fe.service.AuthRestClientService;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,12 +24,13 @@ public class EditalPageController {
     @Autowired
     private AuthRestClientService restService;
 
-
     @GetMapping("/editais")
     public String listarEditais(@RequestParam(required = false) Boolean urgente,
-                                HttpSession session, Model model) {
+            HttpSession session, Model model) {
         String token = (String) session.getAttribute("token");
-        if (token == null) return "redirect:/login";
+        if (token == null) {
+            return "redirect:/login";
+        }
 
         try {
             List<EditalBean> editais;
@@ -55,11 +55,15 @@ public class EditalPageController {
     @GetMapping("/editais/novo")
     public String novoEditalForm(HttpSession session, Model model) {
         String token = (String) session.getAttribute("token");
-        if (token == null) return "redirect:/login";
+        if (token == null) {
+            return "redirect:/login";
+        }
 
         String role = (String) session.getAttribute("role");
-        if (!"COMPRADOR".equals(role)) return "redirect:/editais";
-        
+        if (!"COMPRADOR".equals(role)) {
+            return "redirect:/editais";
+        }
+
         model.addAttribute("edital", new EditalBean());
         model.addAttribute("nome", session.getAttribute("nome"));
         model.addAttribute("role", session.getAttribute("role"));
@@ -68,9 +72,11 @@ public class EditalPageController {
 
     @PostMapping("/editais/novo")
     public String criarEdital(@ModelAttribute EditalBean edital,
-                              HttpSession session, Model model) {
+            HttpSession session, Model model) {
         String token = (String) session.getAttribute("token");
-        if (token == null) return "redirect:/login";
+        if (token == null) {
+            return "redirect:/login";
+        }
 
         try {
             restService.criarEdital(edital, token);
@@ -86,16 +92,16 @@ public class EditalPageController {
             model.addAttribute("nome", session.getAttribute("nome"));
             model.addAttribute("role", session.getAttribute("role"));
 
-
             return "novo-edital";
         }
     }
-    
+
     @GetMapping("/editais/{id}")
-    public String detalhesEdital(@PathVariable Long id,
-                                  HttpSession session, Model model) {
+    public String detalhesEdital(@PathVariable Long id, HttpSession session, Model model) {
         String token = (String) session.getAttribute("token");
-        if (token == null) return "redirect:/login";
+        if (token == null) {
+            return "redirect:/login";
+        }
 
         try {
             List<EditalBean> todos = restService.listarEditais(token);
@@ -103,15 +109,42 @@ public class EditalPageController {
                     .filter(e -> e.getId().equals(id))
                     .findFirst().orElse(null);
 
-            if (edital == null) return "redirect:/editais";
+            if (edital == null) {
+                return "redirect:/editais";
+            }
 
             model.addAttribute("edital", edital);
             model.addAttribute("lance", new LancesBean());
             model.addAttribute("role", session.getAttribute("role"));
             model.addAttribute("nome", session.getAttribute("nome"));
+
+            // Buscar lances do fornecedor logado
+            String role = (String) session.getAttribute("role");
+            if ("COMPRADOR".equals(role)) {
+                List<LancesBean> meusLances = restService.listarMeusLances(id, token);
+                model.addAttribute("meusLances", meusLances);
+            }
+
             return "edital-detalhes";
         } catch (Exception e) {
             return "redirect:/editais";
+        }
+    }
+
+    @PostMapping("/editais/{id}/lance")
+    public String registrarLance(@PathVariable Long id,
+            @ModelAttribute LancesBean lance,
+            HttpSession session) {
+        String token = (String) session.getAttribute("token");
+        if (token == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            restService.registrarLance(id, lance.getValor(), token);
+            return "redirect:/editais/" + id + "?sucesso";
+        } catch (Exception e) {
+            return "redirect:/editais/" + id + "?erro=" + e.getMessage();
         }
     }
 

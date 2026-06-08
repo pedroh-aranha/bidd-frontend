@@ -14,13 +14,13 @@ public class LancesBean {
     private Long id;
     private double valor;
     private Date data_lance;
-    private long idEdital;
-    private long idusuario;
+    private Long idEdital;
+    private Long idusuario;
 
     public LancesBean() {
     }
 
-    public LancesBean(Long id, double valor, Date data_lance, long idEdital, long idusuario) {
+    public LancesBean(Long id, double valor, Date data_lance, Long idEdital, Long idusuario) {
         this.id = id;
         this.valor = valor;
         this.data_lance = data_lance;
@@ -52,21 +52,21 @@ public class LancesBean {
         this.data_lance = data_lance;
     }
 
-    public long getIdEdital() {
+    public Long getIdEdital() {
         return idEdital;
     }
 
-    public void setIdEdital(long idEdital) {
+    public void setIdEdital(Long idEdital) {
         this.idEdital = idEdital;
     }
 
-    public long getIdusuario() {
+    public Long getIdusuario() {
         return idusuario;
     }
 
-    public void setIdusuario(long idusuario) {
+    public void setIdusuario(Long idusuario) {
         this.idusuario = idusuario;
     }
-    
+  
     
 }

@@ -71,7 +71,12 @@ public class EditalBean {
     }
 
     public Boolean getUrgente() {
-        return urgente;
+        if (datafechamento == null || status == null || !status.equals("ABERTO")) {
+            return false;
+        }
+        long diffMillis = datafechamento.getTime() - System.currentTimeMillis();
+        long diffDays = diffMillis / (1000 * 60 * 60 * 24);
+        return diffDays >= 0 && diffDays <= 3;
     }
 
     public void setUrgente(Boolean urgente) {

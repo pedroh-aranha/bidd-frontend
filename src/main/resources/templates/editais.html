@@ -16,19 +16,17 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
     <body class="bg-light">
 
+        <!-- NAVBAR -->
+        <div th:replace="~{layout :: navbar(${role}, ${nome})}"></div>
+
         <main class="container py-5">
 
             <!-- HEADER -->
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
 
                 <div>
-                    <h1 class="fw-bold mb-1">
-                        📄 Lista de Editais
-                    </h1>
-
-                    <p class="text-muted mb-0">
-                        Gerencie e acompanhe os editais disponíveis.
-                    </p>
+                    <h1 class="fw-bold mb-1">📄 Lista de Editais</h1>
+                    <p class="text-muted mb-0">Gerencie e acompanhe os editais disponíveis.</p>
                 </div>
 
                 <div class="d-flex gap-2 flex-wrap">
@@ -36,29 +34,19 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     <a th:href="@{/editais}"
                        class="btn btn-outline-secondary"
                        th:classappend="${urgente == null or !urgente} ? ' active' : ''">
-
                         Todos
                     </a>
 
                     <a th:href="@{/editais(urgente=true)}"
                        class="btn btn-warning"
                        th:classappend="${urgente} ? ' active' : ''">
-
                         ⚠️ Urgentes
                     </a>
 
                     <a th:if="${role == 'COMPRADOR'}"
                        th:href="@{/editais/novo}"
                        class="btn btn-primary">
-
                         + Novo Edital
-                    </a>
-
-                    <!-- LOGOUT -->
-                    <a th:href="@{/logout}"
-                       class="btn btn-danger">
-
-                        Sair
                     </a>
 
                 </div>
@@ -66,27 +54,18 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
             <!-- CARD -->
             <div class="card shadow border-0 rounded-4">
-
                 <div class="card-body p-4">
 
                     <!-- SEM EDITAIS -->
-                    <div th:if="${#lists.isEmpty(editais)}"
-                         class="text-center py-5">
-
-                        <h4 class="text-muted">
-                            Nenhum edital encontrado.
-                        </h4>
-
+                    <div th:if="${#lists.isEmpty(editais)}" class="text-center py-5">
+                        <h4 class="text-muted">Nenhum edital encontrado.</h4>
                     </div>
 
                     <!-- TABELA -->
-                    <div class="table-responsive"
-                         th:if="${!#lists.isEmpty(editais)}">
-
+                    <div class="table-responsive" th:if="${!#lists.isEmpty(editais)}">
                         <table class="table table-hover align-middle">
 
                             <thead class="table-dark">
-
                                 <tr>
                                     <th>Título</th>
                                     <th>Descrição</th>
@@ -94,71 +73,50 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                     <th>Status</th>
                                     <th class="text-center">Ações</th>
                                 </tr>
-
                             </thead>
 
                             <tbody>
-
                                 <tr th:each="edital : ${editais}">
 
-
                                     <td>
-
-                                        <div class="fw-semibold"
-                                             th:text="${edital.titulo}">
-                                        </div>
-
+                                        <div class="fw-semibold" th:text="${edital.titulo}"></div>
                                         <span th:if="${edital.urgente != null and edital.urgente}"
                                               class="badge bg-danger mt-1">
-
                                             ⚠️ Urgente
-
                                         </span>
-
                                     </td>
 
-                                    <td class="text-muted"
-                                        th:text="${edital.descricao}">
-                                    </td>
+                                    <td class="text-muted" th:text="${edital.descricao}"></td>
 
-                                    <td th:text="${edital.datafechamento}">
-                                    </td>
+                                    <td th:text="${edital.datafechamento}"></td>
 
                                     <td>
-
                                         <span class="badge"
-                                              th:classappend="${edital.status == 'ABERTO'}
-                                              ? ' bg-success'
-                                              : ' bg-secondary'"
-
+                                              th:classappend="${edital.status == 'ABERTO'} ? ' bg-success' : ' bg-secondary'"
                                               th:text="${edital.status}">
                                         </span>
-
                                     </td>
 
                                     <td class="text-center">
-
                                         <a th:href="@{/editais/{id}(id=${edital.id})}"
                                            class="btn btn-outline-primary btn-sm">
-
                                             Ver
-
                                         </a>
-
                                     </td>
 
                                 </tr>
-
                             </tbody>
 
                         </table>
-
                     </div>
 
                 </div>
             </div>
 
         </main>
+
         <div th:replace="~{layout :: footer}"></div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

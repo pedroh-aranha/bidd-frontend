@@ -5,6 +5,7 @@
 package com.bidding.frontend.bidding.fe.service;
 
 import com.bidding.frontend.bidding.fe.model.EditalBean;
+import com.bidding.frontend.bidding.fe.model.LancesBean;
 import com.bidding.frontend.bidding.fe.model.UserBean;
 import com.bidding.frontend.bidding.fe.model.UserRequestBean;
 import java.util.Arrays;
@@ -138,13 +139,30 @@ public class AuthRestClientService {
                 .body(String.class);
     }
 
-    public List<com.bidding.frontend.bidding.fe.model.LancesBean> listarMeusLances(Long idEdital, String token) {
+    public List<com.bidding.frontend.bidding.fe.model.LancesBean> listarLancesDoEdital(Long idEdital, String token) {
         com.bidding.frontend.bidding.fe.model.LancesBean[] lances = restClient.get()
                 .uri("/editais/" + idEdital + "/lances")
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
                 .body(com.bidding.frontend.bidding.fe.model.LancesBean[].class);
         return Arrays.asList(lances);
+    }
+
+    public List<LancesBean> listarMeusLances(String token) {
+        LancesBean[] lances = restClient.get()
+                .uri("/editais/lances/meus")
+                .header("Authorization", "Bearer " + token)
+                .retrieve()
+                .body(LancesBean[].class);
+        return Arrays.asList(lances);
+    }
+
+    public EditalBean getEditalById(Long id, String token) {
+        return restClient.get()
+                .uri("/editais/" + id)
+                .header("Authorization", "Bearer " + token)
+                .retrieve()
+                .body(EditalBean.class);
     }
 
 }

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Meus Lances – Bidding System</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+              rel="stylesheet">
+
+        <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    </head>
+
+    <body class="bg-light">
+
+        <!-- NAVBAR -->
+        <div th:replace="~{layout :: navbar(${role}, ${nome})}"></div>
+
+        <main class="container py-5">
+
+            <!-- HEADER -->
+            <div class="mb-4">
+                <h1 class="fw-bold mb-1">💼 Meus Lances</h1>
+                <p class="text-muted mb-0">Acompanhe todos os lances que você enviou.</p>
+            </div>
+
+            <!-- SEM LANCES -->
+            <div th:if="${#lists.isEmpty(lances)}"
+                 class="card shadow border-0 rounded-4">
+                <div class="card-body text-center py-5">
+                    <div class="mb-3" style="font-size: 3rem;">📭</div>
+                    <h4 class="text-muted">Você ainda não enviou nenhum lance.</h4>
+                    <p class="text-muted">Explore os editais disponíveis e participe de uma licitação.</p>
+                    <a th:href="@{/editais}" class="btn btn-primary mt-2">Ver Editais</a>
+                </div>
+            </div>
+
+            <!-- LISTA DE LANCES -->
+            <div th:if="${!#lists.isEmpty(lances)}"
+                 class="card shadow border-0 rounded-4">
+
+                <div class="card-header bg-dark text-white rounded-top-4 p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-0 fw-bold">Histórico de Lances</h2>
+                    </div>
+                    <span class="badge bg-primary fs-6"
+                          th:text="${#lists.size(lances)} + ' lance(s)'">
+                    </span>
+                </div>
+
+                <div class="card-body p-0">
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Edital</th>
+                                <th>Valor (R$)</th>
+                                <th>Data do Lance</th>
+                                <th>Status do Edital</th>
+                                <th class="text-center pe-4">Ações</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr th:each="lance : ${lances}">
+
+                                <td class="ps-4">
+                                    <div class="fw-semibold" th:text="${lance.editalTitulo}">
+                                        Título do Edital
+                                    </div>
+                                    <small class="text-muted"
+                                           th:text="'Fechamento: ' + ${lance.editalDatafechamento}">
+                                    </small>
+                                </td>
+
+                                <td>
+                                    <span class="fw-bold text-success"
+                                          th:text="'R$ ' + ${#numbers.formatDecimal(lance.valor, 1, 'POINT', 2, 'COMMA')}">
+                                    </span>
+                                </td>
+
+                                <td th:text="${lance.data_lance}">
+                                </td>
+
+                                <td>
+                                    <span class="badge"
+                                          th:classappend="${lance.editalStatus == 'ABERTO'} ? 'bg-success' : 'bg-secondary'"
+                                          th:text="${lance.editalStatus}">
+                                    </span>
+                                    <span class="badge bg-warning text-dark mt-1 d-block" th:if="${lance.vencedor}">
+                                        🏆 Vencedor
+                                    </span>
+                                </td>
+
+                                <td class="text-center pe-4">
+                                    <a th:href="@{/editais/{id}(id=${lance.idEdital})}"
+                                       class="btn btn-outline-primary btn-sm">
+                                        Ver Edital
+                                    </a>
+                                </td>
+
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+
+            <!-- RESUMO (só aparece se houver lances) -->
+            <div th:if="${!#lists.isEmpty(lances)}" class="row mt-4 g-3">
+
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 text-center p-4">
+                        <div class="text-muted small mb-1">Total de Lances</div>
+                        <div class="fw-bold fs-3"
+                             th:text="${#lists.size(lances)}">0</div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 text-center p-4">
+                        <div class="text-muted small mb-1">Editais Abertos</div>
+                        <div class="fw-bold fs-3 text-success"
+                             th:text="${lances.?[editalStatus == 'ABERTO'].size()}">0</div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 text-center p-4">
+                        <div class="text-muted small mb-1">Editais Encerrados</div>
+                        <div class="fw-bold fs-3 text-secondary"
+                             th:text="${lances.?[editalStatus != 'ABERTO'].size()}">0</div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+        <div th:replace="~{layout :: footer}"></div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

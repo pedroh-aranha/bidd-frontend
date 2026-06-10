@@ -8,6 +8,7 @@ import com.bidding.frontend.bidding.fe.model.EditalBean;
 import com.bidding.frontend.bidding.fe.model.LancesBean;
 import com.bidding.frontend.bidding.fe.service.AuthRestClientService;
 import jakarta.servlet.http.HttpSession;
+import java.util.Collections;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -104,10 +105,7 @@ public class EditalPageController {
         }
 
         try {
-            List<EditalBean> todos = restService.listarEditais(token);
-            EditalBean edital = todos.stream()
-                    .filter(e -> e.getId().equals(id))
-                    .findFirst().orElse(null);
+            EditalBean edital = restService.getEditalById(id, token);
 
             if (edital == null) {
                 return "redirect:/editais";
@@ -118,11 +116,17 @@ public class EditalPageController {
             model.addAttribute("role", session.getAttribute("role"));
             model.addAttribute("nome", session.getAttribute("nome"));
 
-            // Buscar lances do fornecedor logado
+            // Buscar lances do edital se for COMPRADOR, ou lance próprio se for FORNECEDOR
             String role = (String) session.getAttribute("role");
             if ("COMPRADOR".equals(role)) {
-                List<LancesBean> meusLances = restService.listarMeusLances(id, token);
-                model.addAttribute("meusLances", meusLances);
+                List<LancesBean> todosLances = restService.listarLancesDoEdital(id, token);
+                model.addAttribute("todosLances", todosLances);
+            } else if ("FORNECEDOR".equals(role)) {
+                List<LancesBean> meusLances = restService.listarMeusLances(token);
+                LancesBean meuLance = meusLances.stream()
+                        .filter(l -> l.getIdEdital().equals(id))
+                        .findFirst().orElse(null);
+                model.addAttribute("meuLance", meuLance);
             }
 
             return "edital-detalhes";
@@ -146,6 +150,30 @@ public class EditalPageController {
         } catch (Exception e) {
             return "redirect:/editais/" + id + "?erro=" + e.getMessage();
         }
+    }
+
+    @GetMapping("/meus-lances")
+    public String meusLances(HttpSession session, Model model) {
+
+        // Verificar autenticação
+        String token = (String) session.getAttribute("token");
+        if (token == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("nome", session.getAttribute("nome"));
+        model.addAttribute("role", session.getAttribute("role"));
+
+        try {
+            List<LancesBean> lances = restService.listarMeusLances(token);
+            model.addAttribute("lances", lances);
+        } catch (Exception e) {
+            // Em caso de erro na API retornar lista vazia em vez de crashar
+            model.addAttribute("lances", Collections.emptyList());
+            model.addAttribute("erro", "Não foi possível carregar seus lances: " + e.getMessage());
+        }
+
+        return "meus-lances";
     }
 
 }

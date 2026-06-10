@@ -13,18 +13,61 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <body>
 
         <!-- FRAGMENTO: navbar -->
-        <nav th:fragment="navbar(role, nome)">
-            <div class="nav-brand">🏷️ Bidding System</div>
-            <div class="nav-links">
-                <a th:if="${role == 'COMPRADOR'}" th:href="@{/editais/novo}">Novo Edital</a>
-                <h3 span class="nav-user">Olá, <strong th:text="${nome}">Usuário</strong></h3>
-                <a th:href="@{/logout}" class="btn-logout">Sair</a>
+        <nav th:fragment="navbar(role, nome)" class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+            <div class="container">
+
+                <!-- BRAND -->
+                <a class="navbar-brand fw-bold fs-5" th:href="@{/editais}">
+                    🏷️ Bidding System
+                </a>
+
+                <!-- TOGGLER (mobile) -->
+                <button class="navbar-toggler" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarMain"
+                        aria-controls="navbarMain"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- LINKS -->
+                <div class="collapse navbar-collapse" id="navbarMain">
+
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/editais}">
+                                📄 Editais
+                            </a>
+                        </li>
+
+                        <li class="nav-item" th:if="${role == 'FORNECEDOR'}">
+                            <a class="nav-link" th:href="@{/meus-lances}">
+                                💼 Meus Lances
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- USUÁRIO + LOGOUT -->
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="text-light" style="font-size: 14px;">
+                            Olá, <strong th:text="${nome}">Usuário</strong>
+                        </span>
+                        <a th:href="@{/logout}" class="btn btn-outline-danger btn-sm">
+                            Sair
+                        </a>
+                    </div>
+
+                </div>
             </div>
         </nav>
 
         <!-- FRAGMENTO: footer -->
-        <footer th:fragment="footer" class="footer">
-            <p>© <span th:text="${#dates.year(#dates.createNow())}"></span> Pedro H. Aranha — Bidding System</p>
+        <footer th:fragment="footer" class="footer mt-5 py-3 bg-dark text-center text-light">
+            <p class="mb-0" style="font-size: 13px;">
+                © <span th:text="${#dates.year(#dates.createNow())}"></span> Pedro H. Aranha — Bidding System
+            </p>
         </footer>
 
     </body>
